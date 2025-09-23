@@ -36,7 +36,7 @@ jobs:
           xcodebuild \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-             -destination "platform=iOS Simulator,name=iPhone 14" \
+             -destination "platform=iOS Simulator,name=iPhone 14,OS=16.4" \
             clean build
   test:
     runs-on: macos-latest
@@ -56,5 +56,5 @@ jobs:
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-           -destination "platform=iOS Simulator,name=iPhone 14" \
+           -destination "platform=iOS Simulator,name=iPhone 14,OS=16.4" \
             -enableCodeCoverage YES
