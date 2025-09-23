@@ -26,7 +26,7 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: List available simulators (debug)
+      - name: List available simulators
         run: xcrun simctl list devices
 
       - name: Build app for simulator
@@ -40,12 +40,15 @@ jobs:
   test:
     runs-on: macos-latest
     needs: build
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install Homebrew packages (XcodeGen)
+        run: |
+          brew update
+          brew install xcodegen
 
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
@@ -55,6 +58,5 @@ jobs:
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 14"
-" \
+            -destination "platform=iOS Simulator,name=iPhone 14" \
             -enableCodeCoverage YES
