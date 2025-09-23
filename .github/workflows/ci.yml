@@ -16,7 +16,7 @@ jobs:
       - name: Set Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.0'  # la versión de Xcode disponible en el runner
+          xcode-version: '16.0'
 
       - name: Install Homebrew packages (XcodeGen)
         run: |
@@ -26,7 +26,7 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: List available simulators (debug)
+      - name: List available simulators
         run: xcrun simctl list devices
 
       - name: Build app for simulator
