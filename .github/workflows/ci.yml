@@ -1,0 +1,60 @@
+name: iOS CI - XcodeGen
+
+on:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: (Opcional) Set specific Xcode version
+        uses: maxim-lobanov/setup-xcode-version@v1
+        with:
+          xcode-version: '15.2' # ajusta si necesitas otra versión (opcional)
+
+      - name: Install Homebrew packages (XcodeGen)
+        run: |
+          brew update
+          brew install xcodegen
+
+      - name: Generate Xcode project
+        run: |
+          xcodegen generate --spec project.yml
+
+      - name: List available simulators (debug)
+        run: xcrun simctl list devices
+
+      - name: Build app for simulator
+        run: |
+          # Si usas CocoaPods -> usa -workspace <Your>.xcworkspace
+          xcodebuild \
+            -scheme "CartoniaApp" \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            clean build
+  test:
+    runs-on: macos-latest
+    needs: build
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+
+      - name: Run unit tests on simulator
+        run: |
+          xcodebuild test \
+            -scheme "CartoniaApp" \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -enableCodeCoverage YES
