@@ -16,7 +16,7 @@ jobs:
       - name: (Opcional) Set specific Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '15.2' # ajusta si necesitas otra versión (opcional)
+          xcode-version: '16.0' # ajusta si necesitas otra versión (opcional)
 
       - name: Install Homebrew packages (XcodeGen)
         run: |
