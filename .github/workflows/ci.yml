@@ -16,7 +16,7 @@ jobs:
       - name: (Opcional) Set specific Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.0' # ajusta si necesitas otra versión (opcional)
+          xcode-version: '16.0'
 
       - name: Install Homebrew packages (XcodeGen)
         run: |
@@ -36,7 +36,7 @@ jobs:
           xcodebuild \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
+             -destination "platform=iOS Simulator,name=iPhone 14" \
             clean build
   test:
     runs-on: macos-latest
@@ -56,5 +56,5 @@ jobs:
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
+           -destination "platform=iOS Simulator,name=iPhone 14" \
             -enableCodeCoverage YES
