@@ -1,0 +1,33 @@
+name: CartoniaApp
+options:
+  bundleIdPrefix: com.macky
+  deploymentTarget:
+    iOS: "15.0"
+
+targets:
+  CartoniaApp:
+    type: application
+    platform: iOS
+    sources:
+      - CartoniaApp
+    resources:
+      - CartoniaApp/Assets.xcassets
+      - CartoniaApp/LaunchScreen.storyboard
+    dependencies:
+      - framework: UIKit
+
+  CartoniaAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - CartoniaAppTests
+    dependencies:
+      - target: CartoniaApp
+
+  CartoniaAppUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - CartoniaAppUITests
+    dependencies:
+      - target: CartoniaApp
