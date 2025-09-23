@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: (Opcional) Set specific Xcode version
+      - name: Set Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '16.0'
@@ -24,20 +24,19 @@ jobs:
           brew install xcodegen
 
       - name: Generate Xcode project
-        run: |
-          xcodegen generate --spec project.yml
+        run: xcodegen generate --spec project.yml
 
       - name: List available simulators (debug)
         run: xcrun simctl list devices
 
       - name: Build app for simulator
         run: |
-          # Si usas CocoaPods -> usa -workspace <Your>.xcworkspace
           xcodebuild \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-             -destination "platform=iOS Simulator,name=iPhone 14,OS=16.4" \
+            -destination "platform=iOS Simulator,name=iPhone 14,OS=16.4" \
             clean build
+
   test:
     runs-on: macos-latest
     needs: build
@@ -56,5 +55,5 @@ jobs:
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-           -destination "platform=iOS Simulator,name=iPhone 14,OS=16.4" \
+            -destination "platform=iOS Simulator,name=iPhone 14,OS=16.4" \
             -enableCodeCoverage YES
