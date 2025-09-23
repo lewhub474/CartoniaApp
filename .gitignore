@@ -1,0 +1,64 @@
+# ────────────────────────────────
+# macOS
+# ────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+
+# ────────────────────────────────
+# Xcode
+# ────────────────────────────────
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+*.xcworkspace
+*.xcuserdata/
+DerivedData/
+build/
+
+# Ignore scheme management files
+xcshareddata/
+
+# ────────────────────────────────
+# XcodeGen
+# ────────────────────────────────
+# El .xcodeproj se genera con `xcodegen generate`
+CartoniaApp.xcodeproj/
+
+# ────────────────────────────────
+# Swift Package Manager
+# ────────────────────────────────
+.swiftpm/
+.build/
+
+# ────────────────────────────────
+# CocoaPods (si llegas a usarlo)
+# ────────────────────────────────
+Pods/
+Podfile.lock
+
+# ────────────────────────────────
+# Carthage (si llegas a usarlo)
+# ────────────────────────────────
+Carthage/Build/
+
+# ────────────────────────────────
+# Fastlane
+# ────────────────────────────────
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# ────────────────────────────────
+# Otros
+# ────────────────────────────────
+*.moved-aside
+*.xcuserstate
+*.swp
+*~
+
