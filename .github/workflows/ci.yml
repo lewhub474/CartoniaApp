@@ -29,9 +29,8 @@ jobs:
       - name: Get first available iOS simulator
         id: simulator
         run: |
-          SIM=$(xcrun simctl list devices available | grep -E "iPhone" | grep "OS 18.5" | head -n 1 | awk -F '[()]' '{print $2}')
+          SIM=$(xcrun simctl list devices available | grep -E "iPhone|iPad" | head -n 1 | awk -F '[()]' '{print $2}')
           echo "SIMULATOR_UDID=$SIM" >> $GITHUB_ENV
-          echo "simulator-udid=$SIM" >> $GITHUB_OUTPUT
           echo "Using simulator UDID: $SIM"
 
       - name: Build app for simulator
@@ -42,12 +41,10 @@ jobs:
             -destination "id=$SIMULATOR_UDID" \
             clean build
 
-    outputs:
-      simulator-udid: ${{ steps.simulator.outputs.simulator-udid }}
-
   test:
     runs-on: macos-latest
     needs: build
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -57,16 +54,26 @@ jobs:
         with:
           xcode-version: '16.0'
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install Homebrew packages (XcodeGen)
+        run: |
+          brew update
+          brew install xcodegen
 
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
+
+      - name: Get first available iOS simulator
+        id: simulator
+        run: |
+          SIM=$(xcrun simctl list devices available | grep -E "iPhone|iPad" | head -n 1 | awk -F '[()]' '{print $2}')
+          echo "SIMULATOR_UDID=$SIM" >> $GITHUB_ENV
+          echo "Using simulator UDID: $SIM"
 
       - name: Run unit tests on simulator
         run: |
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "id=${{ needs.build.outputs.simulator-udid }}" \
+            -destination "id=$SIMULATOR_UDID" \
             -enableCodeCoverage YES
+
