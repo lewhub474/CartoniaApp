@@ -31,3 +31,16 @@ targets:
       - CartoniaAppUITests
     dependencies:
       - target: CartoniaApp
+
+schemes:
+  CartoniaApp:
+    build:
+      targets:
+        CartoniaApp: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - name: CartoniaAppTests
+        - name: CartoniaAppUITests
