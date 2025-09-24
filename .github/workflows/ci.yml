@@ -26,26 +26,20 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      # 🔹 Variante híbrida: detecta el primer simulador válido o usa fallback fijo
-      - name: Get available simulator (hybrid)
+      - name: Get iPhone 15 Pro simulator (flexible OS)
         id: simulator
         run: |
-          SIM=$(xcrun simctl list devices available | grep -E "iPhone 15 Pro" | grep "18.5" | awk -F '[()]' '{print $2}' | head -n 1)
-          if [ -z "$SIM" ]; then
-            echo "⚠️ No se encontró iPhone 15 Pro (iOS 18.5), usando fallback fijo."
-            DEST="platform=iOS Simulator,name=iPhone 15 Pro,OS=18.5"
-          else
-            echo "✅ Usando simulador detectado: $SIM"
-            DEST="id=$SIM"
-          fi
-          echo "DESTINATION=$DEST" >> $GITHUB_ENV
+          SIM=$(xcrun simctl list devices available | grep -E "iPhone 15 Pro" | awk -F '[()]' '{print $2}' | head -n 1)
+          echo "SIMULATOR_UDID=$SIM" >> $GITHUB_ENV
+          echo "DESTINATION=platform=iOS Simulator,name=iPhone 15 Pro,id=$SIM" >> $GITHUB_ENV
+          echo "Using simulator UDID: $SIM"
 
       - name: Build app for simulator
         run: |
           xcodebuild \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "${{ env.DESTINATION }}" \
+            -destination "$DESTINATION" \
             clean build
 
   test:
@@ -69,23 +63,18 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: Get available simulator (hybrid)
+      - name: Get iPhone 15 Pro simulator (flexible OS)
         id: simulator
         run: |
-          SIM=$(xcrun simctl list devices available | grep -E "iPhone 15 Pro" | grep "18.5" | awk -F '[()]' '{print $2}' | head -n 1)
-          if [ -z "$SIM" ]; then
-            echo "⚠️ No se encontró iPhone 15 Pro (iOS 18.5), usando fallback fijo."
-            DEST="platform=iOS Simulator,name=iPhone 15 Pro,OS=18.5"
-          else
-            echo "✅ Usando simulador detectado: $SIM"
-            DEST="id=$SIM"
-          fi
-          echo "DESTINATION=$DEST" >> $GITHUB_ENV
+          SIM=$(xcrun simctl list devices available | grep -E "iPhone 15 Pro" | awk -F '[()]' '{print $2}' | head -n 1)
+          echo "SIMULATOR_UDID=$SIM" >> $GITHUB_ENV
+          echo "DESTINATION=platform=iOS Simulator,name=iPhone 15 Pro,id=$SIM" >> $GITHUB_ENV
+          echo "Using simulator UDID: $SIM"
 
       - name: Run unit tests on simulator
         run: |
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "${{ env.DESTINATION }}" \
+            -destination "$DESTINATION" \
             -enableCodeCoverage YES
