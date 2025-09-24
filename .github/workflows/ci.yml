@@ -38,7 +38,7 @@ jobs:
           xcodebuild \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "id=$SIMULATOR_UDID" \
+            -destination "id=${{ env.SIMULATOR_UDID }}" \
             clean build
 
   test:
@@ -74,6 +74,5 @@ jobs:
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "id=$SIMULATOR_UDID" \
+            -destination "id=${{ env.SIMULATOR_UDID }}" \
             -enableCodeCoverage YES
-
