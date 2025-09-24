@@ -26,19 +26,12 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: Get first available iOS simulator
-        id: simulator
-        run: |
-          SIM=$(xcrun simctl list devices available | grep -E "iPhone|iPad" | head -n 1 | awk -F '[()]' '{print $2}')
-          echo "SIMULATOR_UDID=$SIM" >> $GITHUB_ENV
-          echo "Using simulator UDID: $SIM"
-
-      - name: Build app for simulator
+      - name: Build app for simulator (iPhone 14 - iOS 18.5)
         run: |
           xcodebuild \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "id=${{ env.SIMULATOR_UDID }}" \
+            -destination "platform=iOS Simulator,name=iPhone 14,OS=18.5" \
             clean build
 
   test:
@@ -62,17 +55,10 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: Get first available iOS simulator
-        id: simulator
-        run: |
-          SIM=$(xcrun simctl list devices available | grep -E "iPhone|iPad" | head -n 1 | awk -F '[()]' '{print $2}')
-          echo "SIMULATOR_UDID=$SIM" >> $GITHUB_ENV
-          echo "Using simulator UDID: $SIM"
-
-      - name: Run unit tests on simulator
+      - name: Run unit tests on simulator (iPhone 14 - iOS 18.5)
         run: |
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "id=${{ env.SIMULATOR_UDID }}" \
+            -destination "platform=iOS Simulator,name=iPhone 14,OS=18.5" \
             -enableCodeCoverage YES
