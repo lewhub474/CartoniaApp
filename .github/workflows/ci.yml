@@ -26,12 +26,12 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: Build app for simulator (iPhone 14 - iOS 18.5)
+      - name: Build app for simulator
         run: |
           xcodebuild \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 14,OS=18.5" \
+            -destination "platform=iOS Simulator,name=iPhone 15 Pro,OS=18.5" \
             clean build
 
   test:
@@ -55,10 +55,11 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: Run unit tests on simulator (iPhone 14 - iOS 18.5)
+      - name: Run unit tests on simulator
         run: |
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 14,OS=18.5" \
+            -destination "platform=iOS Simulator,name=iPhone 15 Pro,OS=18.5" \
             -enableCodeCoverage YES
+
