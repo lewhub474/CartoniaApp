@@ -10,6 +10,7 @@ jobs:
     runs-on: macos-latest
     outputs:
       destination: ${{ steps.sim.outputs.destination }}
+      destination_id: ${{ steps.sim.outputs.destination_id }}
     steps:
       - name: Set Xcode version
         uses: maxim-lobanov/setup-xcode@v1
@@ -25,6 +26,7 @@ jobs:
             exit 1
           fi
           echo "destination=platform=iOS Simulator,name=iPhone 15 Pro,id=$SIM" >> $GITHUB_OUTPUT
+          echo "destination_id=id=$SIM" >> $GITHUB_OUTPUT
           echo "✅ Using simulator UDID: $SIM"
 
   build:
@@ -47,6 +49,10 @@ jobs:
 
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
+
+      - name: Debug available destinations
+        run: |
+          xcodebuild -scheme CartoniaApp -showdestinations
 
       - name: Build app for simulator
         run: |
