@@ -6,32 +6,8 @@ on:
   pull_request:
 
 jobs:
-  setup-sim:
-    runs-on: macos-latest
-    outputs:
-      destination: ${{ steps.sim.outputs.destination }}
-      destination_id: ${{ steps.sim.outputs.destination_id }}
-    steps:
-      - name: Set Xcode version
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '16.0'
-
-      - name: Get iPhone 15 Pro simulator (flexible OS)
-        id: sim
-        run: |
-          SIM=$(xcrun simctl list devices available | grep "iPhone 15 Pro" | sed -E 's/.*\[([0-9A-F-]+)\].*/\1/' | head -n 1)
-          if [ -z "$SIM" ]; then
-            echo "❌ No se encontró un simulador iPhone 15 Pro disponible."
-            exit 1
-          fi
-          echo "destination=platform=iOS Simulator,name=iPhone 15 Pro,id=$SIM" >> $GITHUB_OUTPUT
-          echo "destination_id=id=$SIM" >> $GITHUB_OUTPUT
-          echo "✅ Using simulator UDID: $SIM"
-
   build:
     runs-on: macos-latest
-    needs: setup-sim
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -50,20 +26,19 @@ jobs:
         run: xcodegen generate --spec project.yml
 
       - name: Debug available destinations
-        run: |
-          xcodebuild -scheme CartoniaApp -showdestinations
+        run: xcodebuild -scheme CartoniaApp -showdestinations
 
       - name: Build app for simulator
         run: |
           xcodebuild \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "${{ needs.setup-sim.outputs.destination }}" \
+            -destination "platform=iOS Simulator,name=Any iOS Simulator Device" \
             clean build
 
   test:
     runs-on: macos-latest
-    needs: [setup-sim, build]
+    needs: build
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -86,6 +61,3 @@ jobs:
           xcodebuild test \
             -scheme "CartoniaApp" \
             -sdk iphonesimulator \
-            -destination "${{ needs.setup-sim.outputs.destination }}" \
-            -enableCodeCoverage YES
-
