@@ -16,17 +16,16 @@ jobs:
         with:
           xcode-version: '16.0'
 
-    - name: Get iPhone 15 Pro simulator (flexible OS)
-  id: sim
-  run: |
-    SIM=$(xcrun simctl list devices available | grep "iPhone 15 Pro" | sed -E 's/.*\[([0-9A-F-]+)\].*/\1/' | head -n 1)
-    if [ -z "$SIM" ]; then
-      echo "❌ No se encontró un simulador iPhone 15 Pro disponible."
-      exit 1
-    fi
-    echo "destination=platform=iOS Simulator,name=iPhone 15 Pro,id=$SIM" >> $GITHUB_OUTPUT
-    echo "✅ Using simulator UDID: $SIM"
-
+      - name: Get iPhone 15 Pro simulator (flexible OS)
+        id: sim
+        run: |
+          SIM=$(xcrun simctl list devices available | grep "iPhone 15 Pro" | sed -E 's/.*\[([0-9A-F-]+)\].*/\1/' | head -n 1)
+          if [ -z "$SIM" ]; then
+            echo "❌ No se encontró un simulador iPhone 15 Pro disponible."
+            exit 1
+          fi
+          echo "destination=platform=iOS Simulator,name=iPhone 15 Pro,id=$SIM" >> $GITHUB_OUTPUT
+          echo "✅ Using simulator UDID: $SIM"
 
   build:
     runs-on: macos-latest
@@ -85,3 +84,4 @@ jobs:
             -sdk iphonesimulator \
             -destination "${{ needs.setup-sim.outputs.destination }}" \
             -enableCodeCoverage YES
+
