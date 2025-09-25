@@ -42,6 +42,9 @@ jobs:
           echo "destination=platform=iOS Simulator,id=$SIM_ID" >> $GITHUB_OUTPUT
           echo "✅ Created simulator iPhone 15 Pro with UDID: $SIM_ID"
 
+      - name: List available simulators (debug)
+        run: xcrun simctl list devices available
+
   build:
     runs-on: macos-latest
     needs: setup-sim
