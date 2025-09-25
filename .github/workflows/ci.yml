@@ -16,12 +16,15 @@ jobs:
         with:
           xcode-version: '16.0'
 
-      - name: Get iPhone 15 Pro simulator
+      - name: List available simulators
+        run: xcrun simctl list devices available
+
+      - name: Get available simulator dynamically
         id: sim
         run: |
-          SIM=$(xcrun simctl list devices available | grep "iPhone 15 Pro" | sed -E 's/.*\[([0-9A-F-]+)\].*/\1/' | head -n 1)
+          SIM=$(xcrun simctl list devices available | grep "iPhone" | head -n 1 | sed -E 's/.*\[([0-9A-F-]+)\].*/\1/')
           if [ -z "$SIM" ]; then
-            echo "❌ No se encontró un simulador iPhone 15 Pro disponible."
+            echo "❌ No se encontró ningún simulador iPhone disponible."
             exit 1
           fi
           echo "destination=platform=iOS Simulator,id=$SIM" >> $GITHUB_OUTPUT
@@ -40,8 +43,10 @@ jobs:
         with:
           xcode-version: '16.0'
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install Homebrew packages (XcodeGen)
+        run: |
+          brew update
+          brew install xcodegen
 
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
@@ -70,8 +75,10 @@ jobs:
         with:
           xcode-version: '16.0'
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install Homebrew packages (XcodeGen)
+        run: |
+          brew update
+          brew install xcodegen
 
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
