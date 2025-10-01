@@ -9,20 +9,12 @@ targets:
     type: application
     platform: iOS
     sources:
-      - CartoniaApp
+      - Sources/CartoniaApp
     resources:
-      - CartoniaApp/Assets.xcassets
-      - CartoniaApp/LaunchScreen.storyboard
+      - Sources/CartoniaApp/Assets.xcassets
+      - Sources/CartoniaApp/LaunchScreen.storyboard
     info:
-      path: CartoniaApp/Info.plist
-      properties:
-        CFBundleName: CartoniaApp
-        CFBundleIdentifier: com.macky.CartoniaApp
-        CFBundleShortVersionString: "1.0"
-        CFBundleVersion: "1"
-        UILaunchStoryboardName: LaunchScreen
-        UIApplicationSceneManifest:
-          UIApplicationSupportsMultipleScenes: true
+      path: Sources/CartoniaApp/Info.plist
     dependencies:
       - framework: UIKit
 
@@ -30,7 +22,7 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - CartoniaAppTests
+      - Tests/CartoniaAppTests
     dependencies:
       - target: CartoniaApp
 
@@ -38,7 +30,7 @@ targets:
     type: bundle.ui-testing
     platform: iOS
     sources:
-      - CartoniaAppUITests
+      - Tests/CartoniaAppUITests
     dependencies:
       - target: CartoniaApp
 
