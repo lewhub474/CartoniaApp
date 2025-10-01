@@ -1,4 +1,4 @@
-name: iOS CI - XcodeGen
+name: iOS CI - SwiftPM
 
 on:
   push:
@@ -6,48 +6,8 @@ on:
   pull_request:
 
 jobs:
-  setup-sim:
-    runs-on: macos-latest
-    outputs:
-      destination: ${{ steps.sim.outputs.destination }}
-    steps:
-      - name: Set Xcode version
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '16.0'
-
-      - name: Cache iOS Simulator Runtimes
-        id: cache-sim
-        uses: actions/cache@v4
-        with:
-          path: /Library/Developer/CoreSimulator/Profiles/Runtimes
-          key: ios-simulators-xcode-16.0-ios-18.0
-
-      - name: Install iOS 18.0 simulator (only if not cached)
-        if: steps.cache-sim.outputs.cache-hit != 'true'
-        run: |
-          echo "⬇️ Downloading iOS platform (this may take several minutes)..."
-          sudo xcodebuild -downloadPlatform iOS
-          echo "✅ iOS platform installed"
-
-      - name: Create iPhone 15 Pro simulator
-        id: sim
-        run: |
-          RUNTIME=$(xcrun simctl list runtimes | grep "iOS 18.0" | awk -F '[()]' '{print $2}' | head -n 1)
-          if [ -z "$RUNTIME" ]; then
-            echo "❌ No se encontró el runtime iOS 18.0"
-            exit 1
-          fi
-          SIM_ID=$(xcrun simctl create "iPhone 15 Pro CI" com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro $RUNTIME)
-          echo "destination=platform=iOS Simulator,id=$SIM_ID" >> $GITHUB_OUTPUT
-          echo "✅ Created simulator iPhone 15 Pro with UDID: $SIM_ID"
-
-      - name: List available simulators (debug)
-        run: xcrun simctl list devices available
-
   build:
     runs-on: macos-latest
-    needs: setup-sim
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -65,17 +25,12 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: Build app for simulator
-        run: |
-          xcodebuild \
-            -scheme "CartoniaApp" \
-            -sdk iphonesimulator \
-            -destination "${{ needs.setup-sim.outputs.destination }}" \
-            clean build
+      - name: Build with SwiftPM
+        run: swift build --configuration release
 
   test:
     runs-on: macos-latest
-    needs: [setup-sim, build]
+    needs: build
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -93,11 +48,5 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate --spec project.yml
 
-      - name: Run unit tests on simulator
-        run: |
-          xcodebuild test \
-            -scheme "CartoniaApp" \
-            -sdk iphonesimulator \
-            -destination "${{ needs.setup-sim.outputs.destination }}" \
-            -enableCodeCoverage YES
-
+      - name: Run tests with SwiftPM
+        run: swift test --enable-code-coverage
